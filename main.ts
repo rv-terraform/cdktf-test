@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { App, TerraformStack } from "cdktf";
+import { App, TerraformStack, TerraformOutput } from "cdktf";
 import { AzurermProvider, ResourceGroup, VirtualNetwork } from "./.gen/providers/azurerm";
 
 class MyStack extends TerraformStack {
@@ -15,13 +15,18 @@ class MyStack extends TerraformStack {
       location: "canadacentral",
     });
 
-    new VirtualNetwork(this, "TfVnet", {
+    const vn = new VirtualNetwork(this, "TfVnet", {
       location: rg.location,
       addressSpace: ["10.0.0.0/24"],
       name: "TerraformVNet",
       resourceGroupName: rg.name,
       dependsOn:[rg],
     });
+
+    new TerraformOutput(this,"vnetname",{
+      value: vn.name
+    });
+
   }
 }
 
